@@ -7,6 +7,8 @@
 Window::Window(Game* game, const char* name, unsigned int width, unsigned int height)
     :m_game(game), m_name(name), m_width(width), m_height(height)
 {
+    std::cout << "Creating a window '"<<name<<"' ("<<width<<","<<height<<")\n";
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -14,6 +16,7 @@ Window::Window(Game* game, const char* name, unsigned int width, unsigned int he
     #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
+
 
     m_window_ptr = glfwCreateWindow(m_width, m_height, m_name.c_str(), nullptr, nullptr);
     glfwMakeContextCurrent(m_window_ptr);
@@ -39,10 +42,13 @@ Window::~Window()
     glfwTerminate();
 }
 
-void Window::Refresh()
-{
+void Window::Clear(){
     glClearColor(0.1f, 0.5f, 0.5f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Window::Present()
+{
     glfwSwapBuffers(m_window_ptr);
 }
 
@@ -66,5 +72,12 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 
 void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
+    Window* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (!self) return;
+
     glViewport(0, 0, width, height);
+    self->m_width = width;
+    self->m_height = width;
+
+    self->m_game->OnWindowResized(self, width, height);
 }

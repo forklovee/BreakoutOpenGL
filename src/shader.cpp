@@ -10,7 +10,7 @@ Shader::~Shader()
 
 Shader &Shader::Use()
 {
-    glUseProgram(this->m_id);
+    glUseProgram(m_id);
     return *this;
 }
 
@@ -36,7 +36,7 @@ void Shader::Compile(const char* vertex_source, const char* fragment_source, con
         checkCompileErrors(gShader, "GEOMETRY");
     }
     // shader program
-    this->m_id = glCreateProgram();
+    m_id = glCreateProgram();
     glAttachShader(this->m_id, sVertex);
     glAttachShader(this->m_id, sFragment);
     if (geometry_source != nullptr)

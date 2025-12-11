@@ -40,5 +40,11 @@
   "command": "/usr/bin/g++ -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include -g -o CMakeFiles/Breakout.dir/src/resource_manager.cpp.o -c /home/forklovee/Documents/Projects/BreakoutOpenGL/src/resource_manager.cpp",
   "file": "/home/forklovee/Documents/Projects/BreakoutOpenGL/src/resource_manager.cpp",
   "output": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir/src/resource_manager.cpp.o"
+},
+{
+  "directory": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build",
+  "command": "/usr/bin/g++ -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include -g -o CMakeFiles/Breakout.dir/src/sprite_renderer.cpp.o -c /home/forklovee/Documents/Projects/BreakoutOpenGL/src/sprite_renderer.cpp",
+  "file": "/home/forklovee/Documents/Projects/BreakoutOpenGL/src/sprite_renderer.cpp",
+  "output": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir/src/sprite_renderer.cpp.o"
 }
 ]

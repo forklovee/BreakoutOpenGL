@@ -15,7 +15,8 @@ public:
     static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-    void Refresh();
+    void Present();
+    void Clear();
 
     bool ShouldClose() const;
 

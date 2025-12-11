@@ -8,6 +8,8 @@
 #include <sstream>
 #include <fstream>
 
+constexpr char const* ASSET_PATH = "../assets/"; 
+
 std::map<std::string, Texture2D> ResourceManager::m_textures;
 std::map<std::string, Shader>    ResourceManager::m_shaders;
 
@@ -53,7 +55,19 @@ Shader ResourceManager::loadShaderFromFile(const char *vert_shader_file, const c
     std::string vertex_code, fragment_code, geometry_code;
     try
     {
+        std::string vert_shader_file_path = std::string(ASSET_PATH) + vert_shader_file;
+        vert_shader_file = vert_shader_file_path.c_str();
+        std::string frag_shader_file_path = std::string(ASSET_PATH) + frag_shader_file;
+        frag_shader_file = frag_shader_file_path.c_str();
+
         std::ifstream vertex_file(vert_shader_file), fragment_file(frag_shader_file);
+        if (!vertex_file.is_open()){
+            std::cerr << "ERROR:RESOURCE_MANAGER: Cannot open vertex shader file: "<<vert_shader_file<<"\n";
+        }
+        if (!fragment_file.is_open()){
+            std::cerr << "ERROR:RESOURCE_MANAGER: Cannot open fragment shader file: "<<frag_shader_file<<"\n";
+        }
+
         std::stringstream vert_shader_stream, frag_shader_stream;
         vert_shader_stream << vertex_file.rdbuf();
         frag_shader_stream << fragment_file.rdbuf();
@@ -64,7 +78,13 @@ Shader ResourceManager::loadShaderFromFile(const char *vert_shader_file, const c
 
         if (geo_shader_file != nullptr)
         {
+            std::string geo_shader_file_path = std::string(ASSET_PATH) + geo_shader_file;
+            geo_shader_file = geo_shader_file_path.c_str();
+
             std::ifstream geometry_file(geo_shader_file);
+            if (!geometry_file.is_open()){
+                std::cerr << "ERROR:RESOURCE_MANAGER: Cannot open geometry shader file: "<<geo_shader_file<<"\n";
+            }
             std::stringstream geo_shader_stream;
             geo_shader_stream << geometry_file.rdbuf();
             geometry_file.close();
@@ -73,7 +93,7 @@ Shader ResourceManager::loadShaderFromFile(const char *vert_shader_file, const c
     }
     catch (const std::exception& e)
     {
-        std::cerr << "ERROR::SHADER: Failed to read shader files. " << e.what() << "\n";
+        std::cout << "ERROR::SHADER: Failed to read shader files. " << e.what() << "\n";
     }
 
     Shader shader;
@@ -86,6 +106,7 @@ Shader ResourceManager::loadShaderFromFile(const char *vert_shader_file, const c
 
 Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
 {
+    std::string full_path = std::string(ASSET_PATH) + file;
     Texture2D texture;
     if (alpha)
     {
@@ -93,8 +114,14 @@ Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
         texture.m_image_format = GL_RGBA;
     }
     int width, height, nr_channels;
-    unsigned char* data = stbi_load(file, &width, &height, &nr_channels, 0);
-    texture.Generate(width, height, data);
-    stbi_image_free(data);
+    unsigned char* data = stbi_load(full_path.c_str(), &width, &height, &nr_channels, 0);
+    if (!data){
+        std::cerr << "ERROR::TEXTURE: Failed to load texture at path: "<<full_path<<"\n";
+    }
+    else{
+        texture.Generate(width, height, data);
+        stbi_image_free(data);
+    }
+
     return texture;
 }

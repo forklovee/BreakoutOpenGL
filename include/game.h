@@ -11,6 +11,7 @@ public:
   void Run();
 
   void OnKeyActionCallback(class Window* window, int key, int scancode, int action, int mode);
+  void OnWindowResized(Window* window, int width, int height);
 
 private:
   void ProcessInput(float dt);

@@ -23,6 +23,7 @@ target_sources(Breakout PRIVATE
     src/shader.cpp
     src/texture.cpp
     src/resource_manager.cpp
+    src/sprite_renderer.cpp
 )
 
 target_link_libraries(Breakout glad glfw)

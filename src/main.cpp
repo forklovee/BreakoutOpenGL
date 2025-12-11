@@ -3,9 +3,7 @@
 
 
 int main(int arg_c, char* argv[]){
-    std::cout << "Hi!\n";
-
-    Game game(100, 100);
+    Game game(720, 720);
     game.Run();
 
     return 0;
