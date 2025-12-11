@@ -1,0 +1,12 @@
+# ninja log v7
+1	515	1765407585176434513	CMakeFiles/Breakout.dir/src/game.cpp.o	b16bae3327e9ce93
+1	76	1765388349252644546	CMakeFiles/glad.dir/libs/glad/src/glad.c.o	b59fbb9ee2b4cf55
+76	107	1765388349328553252	libglad.a	3e6c6c10d11b0406
+2	301	1765407516272799571	CMakeFiles/Breakout.dir/src/main.cpp.o	8b866d681f64fc67
+516	569	1765407585691431786	Breakout	aedbe8cb132642bb
+1	29	1765414134465474164	build.ninja	b20bd730041bf708
+1	29	1765414134464682838	/home/forklovee/Documents/Projects/BreakoutOpenGL/build/cmake_install.cmake	b20bd730041bf708
+3	674	1765407516274077207	CMakeFiles/Breakout.dir/src/shader.cpp.o	39637ecdd1696bdd
+2	245	1765402469991699745	CMakeFiles/Breakout.dir/src/texture.cpp.o	233288b937bf2c10
+3	1292	1765407516274266426	CMakeFiles/Breakout.dir/src/resource_manager.cpp.o	5874d8cf855fa9f6
+2	278	1765407585177434508	CMakeFiles/Breakout.dir/src/window.cpp.o	ea140af731649905
