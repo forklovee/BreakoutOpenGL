@@ -1,5 +1,6 @@
 #include "game.h"
 
+#include "gamelevel.h"
 #include "resource_manager.h"
 #include "sprite_renderer.h"
 #include "texture.h"
@@ -9,60 +10,38 @@
 #include <memory>
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
+#include <utility>
 
 
 std::unique_ptr<SpriteRenderer> renderer;
 
-Game::Game(unsigned int width, unsigned int height)
-    :m_width(width), m_height(height)
-{
-    
-}
-
 Game::~Game()
 {
-
+    ResourceManager::Clear();
 }
 
-void Game::Run(){
-    Window window(this, "Breakout", m_width, m_height);
+void Game::Run(unsigned int screen_width, unsigned int screen_height){
+    m_state = GAME_ACTIVE;
 
-    Shader* shader = ResourceManager::LoadShader(
-        "shaders/sprite.vs", "shaders/sprite.frag", nullptr, "sprite_shader");
-    
-    if (!shader) {
-        std::cerr << "ERROR: sprite shader pointer is null\n";
-    } else {
-        std::cerr << "DEBUG: sprite shader program id = " << shader->m_id << "\n";
-    }
-
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(m_width), 
-        static_cast<float>(m_height), 0.0f, -1.0f, 1.0f);
-    shader->Use();
-    shader->SetInteger("image", 0);
-    shader->SetMatrix4("projection", projection);
-
-    renderer = std::make_unique<SpriteRenderer>(shader);
-    ResourceManager::LoadTexture("textures/trzeciaszyna.jpg", false, "cat");
+    m_window = std::make_unique<Window>(this, "Breakout", screen_width, screen_height);
+    init();
 
     float delta_time = 0.f;
     float last_frame_time = 0.f;
-    while(!window.ShouldClose())
+    while(!m_window->ShouldClose())
     {
         float current_frame_time = glfwGetTime();
         delta_time = current_frame_time - last_frame_time;
         last_frame_time = current_frame_time;
         glfwPollEvents();
 
-        ProcessInput(delta_time);
-        Update(delta_time);
+        processInput(delta_time);
+        update(delta_time);
 
-        window.Clear();
-        Render();
-        window.Present();
+        m_window->Clear();
+        render();
+        m_window->Present();
     }
-
-    ResourceManager::Clear();
 }
 
 void Game::OnKeyActionCallback(Window* window, int key, int scancode, int action, int mods)
@@ -81,17 +60,57 @@ void Game::OnWindowResized(Window* window, int width, int height)
     std::cout << "Game::OnWindowResized: ("<<width<<","<<height<<")\n";
 }
 
-
-void Game::ProcessInput(float dt){
-    
-}
-
-void Game::Update(float dt){
-    
-}
-
-void Game::Render()
+void Game::init()
 {
-    Texture2D* tonfa = ResourceManager::GetTexture("cat");
+    Shader* shader = ResourceManager::LoadShader(
+        "sprite.vs", "sprite.frag", nullptr, "sprite_shader");
+
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(m_window->m_width), 
+        static_cast<float>(m_window->m_height), 0.0f, -1.0f, 1.0f);
+    shader->Use();
+    shader->SetInteger("image", 0);
+    shader->SetMatrix4("projection", projection);
+
+    renderer = std::make_unique<SpriteRenderer>(shader);
+    ResourceManager::LoadTexture("trzeciaszyna.jpg", false, "tonfa");
+    ResourceManager::LoadTexture("funnycat.jpg", false, "cat");
+
+    GameLevel first;
+    first.Load("standard.lvl", m_window->m_width, m_window->m_height/2);
+    m_levels.emplace_back(std::move(first));
+    GameLevel second;
+    second.Load("gaps.lvl", m_window->m_width, m_window->m_height/2);
+    m_levels.emplace_back(std::move(second));
+    GameLevel third;
+    third.Load("invader.lvl", m_window->m_width, m_window->m_height/2);
+    m_levels.emplace_back(std::move(third));
+    GameLevel fourth;
+    fourth.Load("bounce.lvl", m_window->m_width, m_window->m_height/2);
+    m_levels.emplace_back(std::move(fourth));
+    m_current_level = 0;
+}
+
+
+void Game::processInput(float dt){
+    
+}
+
+void Game::update(float dt){
+    
+}
+
+void Game::render()
+{
+    Texture2D* tonfa = ResourceManager::GetTexture("tonfa");
+    Texture2D* funnycat = ResourceManager::GetTexture("cat");
     renderer->DrawSprite(tonfa, glm::vec2(0.0f, 0.0f), glm::vec2(720.0f, 720.0f));
+    renderer->DrawSprite(tonfa, glm::vec2(55.0f, 0.0f), glm::vec2(100.0f, 100.0f));
+    renderer->DrawSprite(funnycat, glm::vec2(120.0f, 0.0f), glm::vec2(320.0f, 180.0f));
+    switch(m_state)
+    {
+        case GAME_ACTIVE:
+            GameLevel& current_level = m_levels.at(m_current_level);
+            current_level.Draw(*renderer.get());
+            break;
+    }
 }

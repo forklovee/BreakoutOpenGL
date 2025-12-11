@@ -8,7 +8,8 @@
 #include <sstream>
 #include <fstream>
 
-constexpr char const* ASSET_PATH = "../assets/"; 
+constexpr char const* TEXTURES_PATH = "../assets/textures/"; 
+constexpr char const* SHADERS_PATH = "../assets/shaders/";
 
 std::map<std::string, Texture2D> ResourceManager::m_textures;
 std::map<std::string, Shader>    ResourceManager::m_shaders;
@@ -55,9 +56,9 @@ Shader ResourceManager::loadShaderFromFile(const char *vert_shader_file, const c
     std::string vertex_code, fragment_code, geometry_code;
     try
     {
-        std::string vert_shader_file_path = std::string(ASSET_PATH) + vert_shader_file;
+        std::string vert_shader_file_path = std::string(SHADERS_PATH) + vert_shader_file;
         vert_shader_file = vert_shader_file_path.c_str();
-        std::string frag_shader_file_path = std::string(ASSET_PATH) + frag_shader_file;
+        std::string frag_shader_file_path = std::string(SHADERS_PATH) + frag_shader_file;
         frag_shader_file = frag_shader_file_path.c_str();
 
         std::ifstream vertex_file(vert_shader_file), fragment_file(frag_shader_file);
@@ -78,7 +79,7 @@ Shader ResourceManager::loadShaderFromFile(const char *vert_shader_file, const c
 
         if (geo_shader_file != nullptr)
         {
-            std::string geo_shader_file_path = std::string(ASSET_PATH) + geo_shader_file;
+            std::string geo_shader_file_path = std::string(SHADERS_PATH) + geo_shader_file;
             geo_shader_file = geo_shader_file_path.c_str();
 
             std::ifstream geometry_file(geo_shader_file);
@@ -106,7 +107,7 @@ Shader ResourceManager::loadShaderFromFile(const char *vert_shader_file, const c
 
 Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
 {
-    std::string full_path = std::string(ASSET_PATH) + file;
+    std::string full_path = std::string(TEXTURES_PATH) + file;
     Texture2D texture;
     if (alpha)
     {

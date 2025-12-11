@@ -24,6 +24,8 @@ target_sources(Breakout PRIVATE
     src/texture.cpp
     src/resource_manager.cpp
     src/sprite_renderer.cpp
+    src/gameobject.cpp
+    src/gamelevel.cpp
 )
 
 target_link_libraries(Breakout glad glfw)

@@ -46,5 +46,17 @@
   "command": "/usr/bin/g++ -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include -g -o CMakeFiles/Breakout.dir/src/sprite_renderer.cpp.o -c /home/forklovee/Documents/Projects/BreakoutOpenGL/src/sprite_renderer.cpp",
   "file": "/home/forklovee/Documents/Projects/BreakoutOpenGL/src/sprite_renderer.cpp",
   "output": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir/src/sprite_renderer.cpp.o"
+},
+{
+  "directory": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build",
+  "command": "/usr/bin/g++ -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include -g -o CMakeFiles/Breakout.dir/src/gameobject.cpp.o -c /home/forklovee/Documents/Projects/BreakoutOpenGL/src/gameobject.cpp",
+  "file": "/home/forklovee/Documents/Projects/BreakoutOpenGL/src/gameobject.cpp",
+  "output": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir/src/gameobject.cpp.o"
+},
+{
+  "directory": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build",
+  "command": "/usr/bin/g++ -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include -g -o CMakeFiles/Breakout.dir/src/gamelevel.cpp.o -c /home/forklovee/Documents/Projects/BreakoutOpenGL/src/gamelevel.cpp",
+  "file": "/home/forklovee/Documents/Projects/BreakoutOpenGL/src/gamelevel.cpp",
+  "output": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir/src/gamelevel.cpp.o"
 }
 ]
