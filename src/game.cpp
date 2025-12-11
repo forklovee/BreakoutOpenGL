@@ -6,6 +6,8 @@
 #include "texture.h"
 #include "window.h"
 
+#include <glm/detail/qualifier.hpp>
+#include <glm/fwd.hpp>
 #include <iostream>
 #include <memory>
 #include <GL/gl.h>
@@ -88,14 +90,31 @@ void Game::init()
     fourth.Load("bounce.lvl", m_window->m_width, m_window->m_height/2);
     m_levels.emplace_back(std::move(fourth));
     m_current_level = 0;
+
+    glm::vec2 player_size = glm::vec2(100.f, 20.f);
+    glm::vec2 player_pos = glm::vec2(
+        m_window->m_width/2.f - player_size.x/2.f,
+        m_window->m_height - player_size.y
+    );
+    Texture2D* paddle_sprite = ResourceManager::LoadTexture("paddle.png", true, "paddle");
+
+    m_player = std::make_unique<Player>(player_pos, player_size, paddle_sprite);
+    m_player->m_max_pos_x = m_window->m_width;
 }
 
 
-void Game::processInput(float dt){
-    
+void Game::processInput(float dt)
+{
+    switch(m_state)
+    {
+        case GAME_ACTIVE:
+            m_player->ProcessInput(dt, m_keys);
+            break;
+    }
 }
 
-void Game::update(float dt){
+void Game::update(float dt)
+{
     
 }
 
@@ -111,6 +130,7 @@ void Game::render()
         case GAME_ACTIVE:
             GameLevel& current_level = m_levels.at(m_current_level);
             current_level.Draw(*renderer.get());
+            m_player->Draw(*renderer.get());
             break;
     }
 }

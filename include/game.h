@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gamelevel.h"
+#include "player.h"
 #include "window.h"
 #include <memory>
 
@@ -30,4 +31,6 @@ public:
 
   unsigned int m_current_level;
   std::vector<GameLevel> m_levels;
+
+  std::unique_ptr<Player> m_player;
 };

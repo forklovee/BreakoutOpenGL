@@ -13,7 +13,6 @@ public:
     
     GameObject(GameObject&& other);
 
-
     virtual void Draw(class SpriteRenderer& renderer);
 
 public:
