@@ -6,8 +6,8 @@ class Player: public GameObject
 {
 public:
     Player();
-    Player(glm::vec2 position, glm::vec2 size, Texture2D* sprite, glm::vec3 color = glm::vec3(1.f));
-    void ProcessInput(float dt, bool (&keys)[1024]);
+    Player(glm::vec2 position, glm::vec2 velocity, glm::vec2 size, Texture2D* sprite, glm::vec3 color = glm::vec3(1.f));
+    void ProcessInput(float dt, const std::array<bool, 1024>& key_states);
 
 public:
     const float PLAYER_VELOCITY = 250.f;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ball.h"
 #include "gamelevel.h"
 #include "player.h"
 #include "window.h"
@@ -9,7 +10,7 @@ enum GameState { GAME_ACTIVE, GAME_MENU, GAME_WIN };
 
 class Game {
 public:
-  Game() = default;
+  Game();
   ~Game();
 
   void Run(unsigned int screen_width, unsigned int screen_height);
@@ -25,12 +26,14 @@ private:
   void render();
 
 public:
-  bool m_keys[1024];
   GameState m_state;
+  std::array<bool, 1024> m_key_states;
+
   std::unique_ptr<Window> m_window;
 
   unsigned int m_current_level;
   std::vector<GameLevel> m_levels;
 
   std::unique_ptr<Player> m_player;
+  std::unique_ptr<BallObject> m_ball;
 };

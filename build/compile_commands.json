@@ -64,5 +64,11 @@
   "command": "/usr/bin/g++ -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include -g -o CMakeFiles/Breakout.dir/src/player.cpp.o -c /home/forklovee/Documents/Projects/BreakoutOpenGL/src/player.cpp",
   "file": "/home/forklovee/Documents/Projects/BreakoutOpenGL/src/player.cpp",
   "output": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir/src/player.cpp.o"
+},
+{
+  "directory": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build",
+  "command": "/usr/bin/g++ -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include -g -o CMakeFiles/Breakout.dir/src/ball.cpp.o -c /home/forklovee/Documents/Projects/BreakoutOpenGL/src/ball.cpp",
+  "file": "/home/forklovee/Documents/Projects/BreakoutOpenGL/src/ball.cpp",
+  "output": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir/src/ball.cpp.o"
 }
 ]

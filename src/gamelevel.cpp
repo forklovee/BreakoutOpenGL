@@ -83,7 +83,8 @@ void GameLevel::buildLevel(std::vector<std::vector<unsigned int>> tile_data, uns
             const char* texture_name = (is_solid) ? "block_solid" : "block";
             const glm::vec3 brick_color = getBrickColorByCode(tile_code);
 
-            GameObject brick(pos, size,
+            GameObject brick(pos, glm::vec2(0.f),
+                size,
                 ResourceManager::GetTexture(texture_name),
                 brick_color
             );

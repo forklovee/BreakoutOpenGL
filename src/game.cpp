@@ -1,5 +1,6 @@
 #include "game.h"
 
+#include "ball.h"
 #include "gamelevel.h"
 #include "resource_manager.h"
 #include "sprite_renderer.h"
@@ -16,6 +17,12 @@
 
 
 std::unique_ptr<SpriteRenderer> renderer;
+
+Game::Game()
+    : m_key_states{}
+{
+
+}
 
 Game::~Game()
 {
@@ -51,9 +58,9 @@ void Game::OnKeyActionCallback(Window* window, int key, int scancode, int action
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            m_keys[key] = true;
+            m_key_states[key] = true;
         else if (action == GLFW_RELEASE)
-            m_keys[key] = false;
+            m_key_states[key] = false;
     }
 }
 
@@ -91,15 +98,22 @@ void Game::init()
     m_levels.emplace_back(std::move(fourth));
     m_current_level = 0;
 
-    glm::vec2 player_size = glm::vec2(100.f, 20.f);
-    glm::vec2 player_pos = glm::vec2(
+    const glm::vec2 player_size = glm::vec2(100.f, 20.f);
+    const glm::vec2 player_pos = glm::vec2(
         m_window->m_width/2.f - player_size.x/2.f,
         m_window->m_height - player_size.y
     );
     Texture2D* paddle_sprite = ResourceManager::LoadTexture("paddle.png", true, "paddle");
 
-    m_player = std::make_unique<Player>(player_pos, player_size, paddle_sprite);
+    m_player = std::make_unique<Player>(player_pos, glm::vec2(0.f), player_size, paddle_sprite);
     m_player->m_max_pos_x = m_window->m_width;
+
+    const glm::vec2 ball_pos = glm::vec2(player_pos.x + player_size.x * .5f, player_pos.y - player_size.y);
+    const glm::vec2 ball_velocity = glm::vec2(100.f, -350.f);
+    const float ball_radius = 32.f;
+    Texture2D* ball_sprite = ResourceManager::LoadTexture("awesomeface.png", true, "ball");
+
+    m_ball = std::make_unique<BallObject>(ball_pos, ball_velocity, ball_radius, ball_sprite);
 }
 
 
@@ -108,14 +122,18 @@ void Game::processInput(float dt)
     switch(m_state)
     {
         case GAME_ACTIVE:
-            m_player->ProcessInput(dt, m_keys);
+            m_player->ProcessInput(dt, m_key_states);
+            if (m_key_states[GLFW_KEY_SPACE]){
+                m_ball->m_stuck = false;
+            }
+
             break;
     }
 }
 
 void Game::update(float dt)
 {
-    
+    m_ball->Move(dt, m_window->m_width);
 }
 
 void Game::render()
@@ -129,8 +147,9 @@ void Game::render()
     {
         case GAME_ACTIVE:
             GameLevel& current_level = m_levels.at(m_current_level);
-            current_level.Draw(*renderer.get());
-            m_player->Draw(*renderer.get());
+            current_level.Draw(*renderer);
+            m_player->Draw(*renderer);
+            m_ball->Draw(*renderer);
             break;
     }
 }

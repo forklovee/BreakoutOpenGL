@@ -6,7 +6,7 @@ class GameObject
 {
 public:
     GameObject();
-    GameObject(glm::vec2 position, glm::vec2 size, class Texture2D* sprite, glm::vec3 color = glm::vec3(1.0f));
+    GameObject(glm::vec2 position, glm::vec2 velocity, glm::vec2 size, class Texture2D* sprite, glm::vec3 color = glm::vec3(1.0f));
     
     GameObject(const GameObject& other);
     GameObject& operator=(const GameObject& other) = delete;
