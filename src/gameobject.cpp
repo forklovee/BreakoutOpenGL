@@ -1,6 +1,7 @@
 #include "gameobject.h"
 
 #include "sprite_renderer.h"
+#include <glm/fwd.hpp>
 
 GameObject::GameObject()
     : m_position(0.f, 0.f), m_velocity(0.f), m_size(1.f, 1.f), m_rotation_deg(0.f), m_sprite(nullptr), m_color(1.f, 1.f, 1.f),
@@ -33,4 +34,22 @@ GameObject::GameObject(GameObject&& other)
 void GameObject::Draw(SpriteRenderer& renderer)
 {
     renderer.DrawSprite(m_sprite, m_position, m_size, m_rotation_deg, m_color);
+}
+
+CollisionData GameObject::CheckCollision(const GameObject& other)
+{
+    const bool x_axis_collision = m_position.x + m_size.x >= other.m_position.x &&
+        m_position.x <= other.m_position.x + other.m_size.x;
+    const bool y_axis_collision = m_position.y + m_size.y >= other.m_position.y &&
+        m_position.y <= other.m_position.y + other.m_size.y;
+
+    glm::vec2 collision_position = glm::vec2();
+    glm::vec2 collision_normal = glm::vec2();
+
+    return {
+        x_axis_collision && y_axis_collision,
+        collision_position,
+        collision_normal,
+        glm::vec2()
+    };
 }

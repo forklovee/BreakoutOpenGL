@@ -2,11 +2,13 @@
 
 #include "ball.h"
 #include "gamelevel.h"
+#include "gameobject.h"
 #include "resource_manager.h"
 #include "sprite_renderer.h"
 #include "texture.h"
 #include "window.h"
 
+#include <glm/common.hpp>
 #include <glm/detail/qualifier.hpp>
 #include <glm/fwd.hpp>
 #include <iostream>
@@ -46,11 +48,17 @@ void Game::Run(unsigned int screen_width, unsigned int screen_height){
 
         processInput(delta_time);
         update(delta_time);
+        processCollisions();
 
         m_window->Clear();
         render();
         m_window->Present();
     }
+}
+
+GameLevel& Game::GetCurrentLevel()
+{
+    return m_levels[m_current_level];
 }
 
 void Game::OnKeyActionCallback(Window* window, int key, int scancode, int action, int mods)
@@ -108,9 +116,9 @@ void Game::init()
     m_player = std::make_unique<Player>(player_pos, glm::vec2(0.f), player_size, paddle_sprite);
     m_player->m_max_pos_x = m_window->m_width;
 
-    const glm::vec2 ball_pos = glm::vec2(player_pos.x + player_size.x * .5f, player_pos.y - player_size.y);
+    const float ball_radius = 16.f;
+    const glm::vec2 ball_pos = glm::vec2(player_pos.x + player_size.x * .5f - ball_radius, player_pos.y - player_size.y * 2.f);
     const glm::vec2 ball_velocity = glm::vec2(100.f, -350.f);
-    const float ball_radius = 32.f;
     Texture2D* ball_sprite = ResourceManager::LoadTexture("awesomeface.png", true, "ball");
 
     m_ball = std::make_unique<BallObject>(ball_pos, ball_velocity, ball_radius, ball_sprite);
@@ -128,6 +136,28 @@ void Game::processInput(float dt)
             }
 
             break;
+    }
+}
+
+void Game::processCollisions()
+{
+    for (GameObject& brick: GetCurrentLevel().GetBricks())
+    {
+        if (brick.m_is_destroyed) continue;
+        CollisionData brick_collision = m_ball->CheckCollision(brick);
+        if (!brick_collision.m_collided) continue;
+
+        if (!brick.m_is_solid)
+        {
+            brick.m_is_destroyed = true;
+        }
+
+        m_ball->OnCollision(brick_collision);
+    }
+
+    CollisionData paddle_collision = m_ball->CheckCollision(*m_player);
+    if (paddle_collision.m_collided){
+        m_ball->OnPaddleCollision(*m_player, paddle_collision);
     }
 }
 

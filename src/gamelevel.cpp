@@ -62,6 +62,11 @@ bool GameLevel::IsCompleted()
         [](GameObject& brick){return !brick.m_is_solid && brick.m_is_destroyed;});
 }
 
+std::vector<GameObject>& GameLevel::GetBricks()
+{
+    return m_bricks;
+}
+
 void GameLevel::buildLevel(std::vector<std::vector<unsigned int>> tile_data, unsigned int level_width, unsigned int level_height)
 {
     unsigned int height = tile_data.size();

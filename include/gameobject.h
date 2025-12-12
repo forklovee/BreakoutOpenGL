@@ -1,6 +1,19 @@
 #pragma once
 
+#include <glm/fwd.hpp>
 #include <glm/glm.hpp>
+
+struct CollisionData
+{
+    CollisionData(bool collided, glm::vec2 position, glm::vec2 normal, glm::vec2 diff)
+        : m_collided(collided), m_position(position), m_normal(normal), m_diff(diff)
+        { };
+    
+    bool m_collided{};
+    glm::vec2 m_position{};
+    glm::vec2 m_normal{};
+    glm::vec2 m_diff{};
+};
 
 class GameObject
 {
@@ -14,6 +27,7 @@ public:
     GameObject(GameObject&& other);
 
     virtual void Draw(class SpriteRenderer& renderer);
+    virtual CollisionData CheckCollision(const GameObject& other);
 
 public:
     glm::vec2 m_position, m_size, m_velocity;
