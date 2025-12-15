@@ -12,7 +12,10 @@ public:
     void Draw(class SpriteRenderer& renderer);
     bool IsCompleted();
 
+    void Reset();
+
     std::vector<GameObject>& GetBricks();
+    void DestroyOneBlock();
 
 private:
     void buildLevel(std::vector<std::vector<unsigned int>> tile_data, unsigned int level_width, unsigned int level_height);

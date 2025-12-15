@@ -107,18 +107,16 @@ void Game::init()
     m_current_level = 0;
 
     const glm::vec2 player_size = glm::vec2(100.f, 20.f);
-    const glm::vec2 player_pos = glm::vec2(
-        m_window->m_width/2.f - player_size.x/2.f,
-        m_window->m_height - player_size.y
-    );
+    const glm::vec2 player_pos = getPaddleRestPosition(player_size);
     Texture2D* paddle_sprite = ResourceManager::LoadTexture("paddle.png", true, "paddle");
 
     m_player = std::make_unique<Player>(player_pos, glm::vec2(0.f), player_size, paddle_sprite);
     m_player->m_max_pos_x = m_window->m_width;
+    m_player->RenewLifePoints(3);
 
     const float ball_radius = 16.f;
     const glm::vec2 ball_pos = glm::vec2(player_pos.x + player_size.x * .5f - ball_radius, player_pos.y - player_size.y * 2.f);
-    const glm::vec2 ball_velocity = glm::vec2(100.f, -350.f);
+    const glm::vec2 ball_velocity = BALL_INITIAL_VELOCITY;
     Texture2D* ball_sprite = ResourceManager::LoadTexture("awesomeface.png", true, "ball");
 
     m_ball = std::make_unique<BallObject>(ball_pos, ball_velocity, ball_radius, ball_sprite);
@@ -133,6 +131,10 @@ void Game::processInput(float dt)
             m_player->ProcessInput(dt, m_key_states);
             if (m_key_states[GLFW_KEY_SPACE]){
                 m_ball->m_stuck = false;
+            }
+
+            if (m_key_states[GLFW_KEY_PAGE_DOWN]){
+                GetCurrentLevel().DestroyOneBlock();
             }
 
             break;
@@ -163,7 +165,31 @@ void Game::processCollisions()
 
 void Game::update(float dt)
 {
-    m_ball->Move(dt, m_window->m_width);
+    if (m_ball->m_stuck){
+        m_ball->m_position = m_player->GetBallSlotPosition(*m_ball);
+    }
+    else{
+        m_ball->Move(dt, m_window->m_width);
+    }
+
+    if (GetCurrentLevel().IsCompleted())
+    {
+        loadNextLevel();
+        return;
+    }
+
+    if (isBallOutOfScreen()) // Lose a life or Game over
+    {
+        if (m_player->HasLifePoints()){
+            m_player->LoseLifePoint();
+            m_ball->Reset(m_player->GetBallSlotPosition(*m_ball), BALL_INITIAL_VELOCITY);
+        }
+        else{
+            m_player->RenewLifePoints(3);
+            GetCurrentLevel().Reset();
+            m_player->m_position.x = m_window->m_width * .5f - m_player->m_size.x * .5f;
+        }
+    }
 }
 
 void Game::render()
@@ -182,4 +208,27 @@ void Game::render()
             m_ball->Draw(*renderer);
             break;
     }
+}
+
+bool Game::loadNextLevel()
+{
+    if (m_current_level + 1 == m_levels.size()) 
+        return false;
+    m_current_level++;
+    return true;
+}
+
+
+glm::vec2 Game::getPaddleRestPosition(const glm::vec2& paddle_size) const
+{
+    return glm::vec2(
+        m_window->m_width*.5f - paddle_size.x*0.5f,
+        m_window->m_height - paddle_size.y
+    );
+}
+
+bool Game::isBallOutOfScreen() const
+{
+    const float margin_y = m_ball->m_size.y * 6.f;
+    return m_ball->m_position.y + m_ball->m_size.y > m_window->m_height + margin_y;
 }

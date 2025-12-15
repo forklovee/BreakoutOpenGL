@@ -59,13 +59,37 @@ void GameLevel::Draw(class SpriteRenderer& renderer)
 bool GameLevel::IsCompleted()
 {
     return std::all_of(m_bricks.begin(), m_bricks.end(),
-        [](GameObject& brick){return !brick.m_is_solid && brick.m_is_destroyed;});
+        [](GameObject& brick){return brick.m_is_solid || brick.m_is_destroyed;});
 }
+
+void GameLevel::Reset()
+{
+    for (GameObject& brick: GetBricks())
+    {
+        brick.m_is_destroyed = false;
+    }
+}
+
 
 std::vector<GameObject>& GameLevel::GetBricks()
 {
     return m_bricks;
 }
+
+void GameLevel::DestroyOneBlock()
+{
+    auto it = std::find_if(m_bricks.begin(), m_bricks.end(), 
+        [](GameObject& brick) {return !brick.m_is_solid && !brick.m_is_destroyed;});
+    if (it == m_bricks.end())
+    {
+        std::cout << "LEVEL: No brick found!!!\n";
+        return;
+    }
+
+    GameObject& brick = *it;
+    it->m_is_destroyed = true;
+}
+
 
 void GameLevel::buildLevel(std::vector<std::vector<unsigned int>> tile_data, unsigned int level_width, unsigned int level_height)
 {

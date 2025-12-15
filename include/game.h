@@ -28,7 +28,13 @@ private:
   void update(float dt);
   void render();
 
+  bool loadNextLevel();
+  glm::vec2 getPaddleRestPosition(const glm::vec2& paddle_size) const;
+  bool isBallOutOfScreen() const;
+
 public:
+  const glm::vec2 BALL_INITIAL_VELOCITY = glm::vec2(100.f, -350.f);
+
   GameState m_state;
   std::array<bool, 1024> m_key_states;
 
