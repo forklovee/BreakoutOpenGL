@@ -184,6 +184,15 @@ build CMakeFiles/Breakout.dir/src/ball.cpp.o: CXX_COMPILER__Breakout_unscanned_D
   OBJECT_FILE_DIR = CMakeFiles/Breakout.dir/src
   TARGET_SUPPORT_DIR = CMakeFiles/Breakout.dir
 
+build CMakeFiles/Breakout.dir/src/particle_generator.cpp.o: CXX_COMPILER__Breakout_unscanned_Debug /home/forklovee/Documents/Projects/BreakoutOpenGL/src/particle_generator.cpp || cmake_object_order_depends_target_Breakout
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles/Breakout.dir/src/particle_generator.cpp.o.d
+  FLAGS = -g
+  INCLUDES = -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include
+  OBJECT_DIR = CMakeFiles/Breakout.dir
+  OBJECT_FILE_DIR = CMakeFiles/Breakout.dir/src
+  TARGET_SUPPORT_DIR = CMakeFiles/Breakout.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Breakout
@@ -192,7 +201,7 @@ build CMakeFiles/Breakout.dir/src/ball.cpp.o: CXX_COMPILER__Breakout_unscanned_D
 #############################################
 # Link the executable Breakout
 
-build Breakout: CXX_EXECUTABLE_LINKER__Breakout_Debug CMakeFiles/Breakout.dir/src/main.cpp.o CMakeFiles/Breakout.dir/src/game.cpp.o CMakeFiles/Breakout.dir/src/window.cpp.o CMakeFiles/Breakout.dir/src/shader.cpp.o CMakeFiles/Breakout.dir/src/texture.cpp.o CMakeFiles/Breakout.dir/src/resource_manager.cpp.o CMakeFiles/Breakout.dir/src/sprite_renderer.cpp.o CMakeFiles/Breakout.dir/src/gameobject.cpp.o CMakeFiles/Breakout.dir/src/gamelevel.cpp.o CMakeFiles/Breakout.dir/src/player.cpp.o CMakeFiles/Breakout.dir/src/ball.cpp.o | libglad.a /usr/lib/libglfw.so.3.4 || libglad.a
+build Breakout: CXX_EXECUTABLE_LINKER__Breakout_Debug CMakeFiles/Breakout.dir/src/main.cpp.o CMakeFiles/Breakout.dir/src/game.cpp.o CMakeFiles/Breakout.dir/src/window.cpp.o CMakeFiles/Breakout.dir/src/shader.cpp.o CMakeFiles/Breakout.dir/src/texture.cpp.o CMakeFiles/Breakout.dir/src/resource_manager.cpp.o CMakeFiles/Breakout.dir/src/sprite_renderer.cpp.o CMakeFiles/Breakout.dir/src/gameobject.cpp.o CMakeFiles/Breakout.dir/src/gamelevel.cpp.o CMakeFiles/Breakout.dir/src/player.cpp.o CMakeFiles/Breakout.dir/src/ball.cpp.o CMakeFiles/Breakout.dir/src/particle_generator.cpp.o | libglad.a /usr/lib/libglfw.so.3.4 || libglad.a
   CONFIG = Debug
   DEP_FILE = CMakeFiles/Breakout.dir/link.d
   FLAGS = -g

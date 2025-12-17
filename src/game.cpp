@@ -3,7 +3,9 @@
 #include "ball.h"
 #include "gamelevel.h"
 #include "gameobject.h"
+#include "particle_generator.h"
 #include "resource_manager.h"
+#include "shader.h"
 #include "sprite_renderer.h"
 #include "texture.h"
 #include "window.h"
@@ -92,6 +94,14 @@ void Game::init()
     ResourceManager::LoadTexture("trzeciaszyna.jpg", false, "tonfa");
     ResourceManager::LoadTexture("funnycat.jpg", false, "cat");
 
+    Shader* particle_shader = ResourceManager::LoadShader("particle.vs", "particle.frag", nullptr, "square_particle");
+    particle_shader->Use();
+    particle_shader->SetInteger("image", 0);
+    particle_shader->SetMatrix4("projection", projection);
+
+    Texture2D* particle_texture = ResourceManager::LoadTexture("particle.png", true, "square");
+    m_particles = std::make_unique<ParticleGenerator>(particle_shader, particle_texture, 500);
+
     GameLevel first;
     first.Load("standard.lvl", m_window->m_width, m_window->m_height/2);
     m_levels.emplace_back(std::move(first));
@@ -165,6 +175,8 @@ void Game::processCollisions()
 
 void Game::update(float dt)
 {
+    m_particles->Update(dt, *m_ball, 2, glm::vec2(m_ball->m_radius * 0.5f));
+
     if (m_ball->m_stuck){
         m_ball->m_position = m_player->GetBallSlotPosition(*m_ball);
     }
@@ -204,6 +216,7 @@ void Game::render()
         case GAME_ACTIVE:
             GameLevel& current_level = m_levels.at(m_current_level);
             current_level.Draw(*renderer);
+            m_particles->Draw();
             m_player->Draw(*renderer);
             m_ball->Draw(*renderer);
             break;

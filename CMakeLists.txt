@@ -28,6 +28,7 @@ target_sources(Breakout PRIVATE
     src/gamelevel.cpp
     src/player.cpp
     src/ball.cpp
+    src/particle_generator.cpp
 )
 
 target_link_libraries(Breakout glad glfw)
