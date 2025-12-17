@@ -4,6 +4,7 @@
 #include "gamelevel.h"
 #include "gameobject.h"
 #include "particle_generator.h"
+#include "post_processor.h"
 #include "resource_manager.h"
 #include "shader.h"
 #include "sprite_renderer.h"
@@ -77,6 +78,8 @@ void Game::OnKeyActionCallback(Window* window, int key, int scancode, int action
 void Game::OnWindowResized(Window* window, int width, int height)
 {
     std::cout << "Game::OnWindowResized: ("<<width<<","<<height<<")\n";
+
+    m_postprocessor->Resize(width, height);
 }
 
 void Game::init()
@@ -93,6 +96,9 @@ void Game::init()
     renderer = std::make_unique<SpriteRenderer>(shader);
     ResourceManager::LoadTexture("trzeciaszyna.jpg", false, "tonfa");
     ResourceManager::LoadTexture("funnycat.jpg", false, "cat");
+
+    Shader* post_processor_shader = ResourceManager::LoadShader("post_processor.vs", "post_processor.frag", nullptr, "post_processor");
+    m_postprocessor = std::make_unique<PostProcessor>(post_processor_shader, m_window->m_width, m_window->m_height);
 
     Shader* particle_shader = ResourceManager::LoadShader("particle.vs", "particle.frag", nullptr, "square_particle");
     particle_shader->Use();
@@ -163,6 +169,10 @@ void Game::processCollisions()
         {
             brick.m_is_destroyed = true;
         }
+        else
+        {
+            m_postprocessor->EnableEffect(PostProcessor::Effect::SHAKE, 0.05f);
+        }
 
         m_ball->OnCollision(brick_collision);
     }
@@ -176,6 +186,7 @@ void Game::processCollisions()
 void Game::update(float dt)
 {
     m_particles->Update(dt, *m_ball, 2, glm::vec2(m_ball->m_radius * 0.5f));
+    m_postprocessor->Update(dt);
 
     if (m_ball->m_stuck){
         m_ball->m_position = m_player->GetBallSlotPosition(*m_ball);
@@ -206,6 +217,8 @@ void Game::update(float dt)
 
 void Game::render()
 {
+    m_postprocessor->Begin();
+
     Texture2D* tonfa = ResourceManager::GetTexture("tonfa");
     Texture2D* funnycat = ResourceManager::GetTexture("cat");
     renderer->DrawSprite(tonfa, glm::vec2(0.0f, 0.0f), glm::vec2(720.0f, 720.0f));
@@ -221,6 +234,9 @@ void Game::render()
             m_ball->Draw(*renderer);
             break;
     }
+
+    m_postprocessor->End();
+    m_postprocessor->Render(glfwGetTime());
 }
 
 bool Game::loadNextLevel()

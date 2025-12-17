@@ -76,5 +76,11 @@
   "command": "/usr/bin/g++ -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include -g -o CMakeFiles/Breakout.dir/src/particle_generator.cpp.o -c /home/forklovee/Documents/Projects/BreakoutOpenGL/src/particle_generator.cpp",
   "file": "/home/forklovee/Documents/Projects/BreakoutOpenGL/src/particle_generator.cpp",
   "output": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir/src/particle_generator.cpp.o"
+},
+{
+  "directory": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build",
+  "command": "/usr/bin/g++ -I/home/forklovee/Documents/Projects/BreakoutOpenGL/include -I/home/forklovee/Documents/Projects/BreakoutOpenGL/libs/glad/include -g -o CMakeFiles/Breakout.dir/src/post_processor.cpp.o -c /home/forklovee/Documents/Projects/BreakoutOpenGL/src/post_processor.cpp",
+  "file": "/home/forklovee/Documents/Projects/BreakoutOpenGL/src/post_processor.cpp",
+  "output": "/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir/src/post_processor.cpp.o"
 }
 ]

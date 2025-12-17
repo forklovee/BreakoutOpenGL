@@ -29,6 +29,7 @@ target_sources(Breakout PRIVATE
     src/player.cpp
     src/ball.cpp
     src/particle_generator.cpp
+    src/post_processor.cpp
 )
 
 target_link_libraries(Breakout glad glfw)

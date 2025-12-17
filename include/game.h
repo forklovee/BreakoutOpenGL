@@ -4,6 +4,7 @@
 #include "gamelevel.h"
 #include "particle_generator.h"
 #include "player.h"
+#include "post_processor.h"
 #include "window.h"
 #include <memory>
 
@@ -40,6 +41,7 @@ public:
   std::array<bool, 1024> m_key_states;
 
   std::unique_ptr<Window> m_window;
+  std::unique_ptr<PostProcessor> m_postprocessor;
   std::unique_ptr<ParticleGenerator> m_particles;
 
   unsigned int m_current_level;
