@@ -12,13 +12,18 @@ public:
     void OnCollision(const CollisionData& collision);
     void OnPaddleCollision(const class Player& player_paddle, const CollisionData& collision);
 
-    glm::vec2 Move(float dt, unsigned int window_width);    
+    glm::vec2 Move(float dt, unsigned int window_width);
 
     void Reset(glm::vec2 position, glm::vec2 velocity);
+    void ResetVelocity();
 
 public:
     bool m_stuck{};
     float m_radius{};
-    glm::vec2 m_initial_velocity{};
 
+    // Modifiers
+    bool m_sticky{}, m_pass_through{};
+
+private:
+    glm::vec2 m_initial_velocity{};
 };

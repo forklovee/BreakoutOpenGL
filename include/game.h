@@ -2,9 +2,11 @@
 
 #include "ball.h"
 #include "gamelevel.h"
+#include "gameobject.h"
 #include "particle_generator.h"
 #include "player.h"
 #include "post_processor.h"
+#include "powerup.h"
 #include "window.h"
 #include <memory>
 
@@ -28,11 +30,16 @@ private:
   void processInput(float dt);
   void processCollisions();
   void update(float dt);
+  void updatePowerUps(float dt);
   void render();
 
   bool loadNextLevel();
   glm::vec2 getPaddleRestPosition(const glm::vec2& paddle_size) const;
   bool isBallOutOfScreen() const;
+
+  bool canSpawnPowerup(uint16_t chance);
+  void spawnPowerUp(GameObject& object);
+  PowerUp* getActivePowerUpByType(PowerUp::Type type);
 
 public:
   const glm::vec2 BALL_INITIAL_VELOCITY = glm::vec2(100.f, -350.f);
@@ -49,4 +56,7 @@ public:
 
   std::unique_ptr<Player> m_player;
   std::unique_ptr<BallObject> m_ball;
+
+  std::vector<PowerUp> m_spawned_powerups;
+
 };

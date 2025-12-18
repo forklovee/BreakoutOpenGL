@@ -23,8 +23,8 @@ glm::vec2 BallObject::Move(float dt, unsigned int window_width)
     if (m_stuck){
         return m_position;
     }
+    m_position = GameObject::Move(dt);
 
-    m_position += m_velocity * dt;
     // X movement
     if (m_position.x <= 0.f)
     {
@@ -70,6 +70,7 @@ CollisionData BallObject::CheckCollision(const GameObject& other)
     }
 
     return {
+        &other,
         glm::length(diff) <= m_radius,
         closest,
         normal,
@@ -81,6 +82,9 @@ void BallObject::OnCollision(const CollisionData& collision)
 {
     const glm::vec2 normal = collision.m_normal;
     const glm::vec2 diff = collision.m_diff;
+    if (m_pass_through && !collision.m_object->m_is_solid)
+        return;
+
     if (glm::abs(normal.y) > glm::abs(normal.x)) //Vertical Collision
     {
         m_velocity.y = -m_velocity.y;
@@ -125,4 +129,12 @@ void BallObject::Reset(glm::vec2 position, glm::vec2 velocity)
     m_position = position;
     m_velocity = velocity;
     m_stuck = true;
+
+    m_sticky = false;
+    m_pass_through = false;
+}
+
+void BallObject::ResetVelocity()
+{
+    m_velocity = m_initial_velocity;
 }

@@ -5,10 +5,11 @@
 
 struct CollisionData
 {
-    CollisionData(bool collided, glm::vec2 position, glm::vec2 normal, glm::vec2 diff)
-        : m_collided(collided), m_position(position), m_normal(normal), m_diff(diff)
+    CollisionData(const class GameObject* object, bool collided, glm::vec2 position, glm::vec2 normal, glm::vec2 diff)
+        : m_object(object), m_collided(collided), m_position(position), m_normal(normal), m_diff(diff)
         { };
     
+    const GameObject* m_object{};
     bool m_collided{};
     glm::vec2 m_position{};
     glm::vec2 m_normal{};
@@ -20,12 +21,14 @@ class GameObject
 public:
     GameObject();
     GameObject(glm::vec2 position, glm::vec2 velocity, glm::vec2 size, class Texture2D* sprite, glm::vec3 color = glm::vec3(1.0f));
-    
-    GameObject(const GameObject& other);
-    GameObject& operator=(const GameObject& other) = delete;
-    
-    GameObject(GameObject&& other);
+    virtual ~GameObject();
 
+    GameObject(const GameObject& other);
+    GameObject& operator=(const GameObject& other);
+    
+    GameObject(GameObject&& other) noexcept;
+
+    virtual glm::vec2 Move(float dt);
     virtual void Draw(class SpriteRenderer& renderer);
     virtual CollisionData CheckCollision(const GameObject& other);
 

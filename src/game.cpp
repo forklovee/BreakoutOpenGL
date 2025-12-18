@@ -5,12 +5,14 @@
 #include "gameobject.h"
 #include "particle_generator.h"
 #include "post_processor.h"
+#include "powerup.h"
 #include "resource_manager.h"
 #include "shader.h"
 #include "sprite_renderer.h"
 #include "texture.h"
 #include "window.h"
 
+#include <algorithm>
 #include <glm/common.hpp>
 #include <glm/detail/qualifier.hpp>
 #include <glm/fwd.hpp>
@@ -18,8 +20,8 @@
 #include <memory>
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
+#include <string>
 #include <utility>
-
 
 std::unique_ptr<SpriteRenderer> renderer;
 
@@ -94,8 +96,7 @@ void Game::init()
     shader->SetMatrix4("projection", projection);
 
     renderer = std::make_unique<SpriteRenderer>(shader);
-    ResourceManager::LoadTexture("trzeciaszyna.jpg", false, "tonfa");
-    ResourceManager::LoadTexture("funnycat.jpg", false, "cat");
+    ResourceManager::LoadTexture("trzeciaszyna.jpg", false, "background");
 
     Shader* post_processor_shader = ResourceManager::LoadShader("post_processor.vs", "post_processor.frag", nullptr, "post_processor");
     m_postprocessor = std::make_unique<PostProcessor>(post_processor_shader, m_window->m_width, m_window->m_height);
@@ -159,6 +160,7 @@ void Game::processInput(float dt)
 
 void Game::processCollisions()
 {
+    // Ball-Brick collision detection
     for (GameObject& brick: GetCurrentLevel().GetBricks())
     {
         if (brick.m_is_destroyed) continue;
@@ -168,6 +170,7 @@ void Game::processCollisions()
         if (!brick.m_is_solid)
         {
             brick.m_is_destroyed = true;
+            spawnPowerUp(brick);
         }
         else
         {
@@ -177,9 +180,33 @@ void Game::processCollisions()
         m_ball->OnCollision(brick_collision);
     }
 
+    // Ball-Paddle collision detection
     CollisionData paddle_collision = m_ball->CheckCollision(*m_player);
     if (paddle_collision.m_collided){
+        if (!m_ball->m_stuck){
+            m_ball->ResetVelocity();
+            m_ball->m_stuck = m_ball->m_sticky;
+        }
         m_ball->OnPaddleCollision(*m_player, paddle_collision);
+    }
+
+    // Paddle-Powerup collision detection
+    for (PowerUp& power_up: m_spawned_powerups)
+    {
+        if (power_up.m_is_destroyed) continue;
+
+        CollisionData paddle_collision = m_player->CheckCollision(power_up);
+        if (!paddle_collision.m_collided) continue;
+        
+        // Check if active power up already exists
+        if (PowerUp* active_power_up = getActivePowerUpByType(power_up.m_type)){
+            power_up.m_is_destroyed = true;
+            active_power_up->ResetDuration();
+            continue;
+        }
+
+        PowerUpContext context{*m_player, *m_ball, *m_postprocessor};
+        power_up.Activate(context);
     }
 }
 
@@ -187,6 +214,8 @@ void Game::update(float dt)
 {
     m_particles->Update(dt, *m_ball, 2, glm::vec2(m_ball->m_radius * 0.5f));
     m_postprocessor->Update(dt);
+
+    updatePowerUps(dt);
 
     if (m_ball->m_stuck){
         m_ball->m_position = m_player->GetBallSlotPosition(*m_ball);
@@ -219,25 +248,58 @@ void Game::render()
 {
     m_postprocessor->Begin();
 
-    Texture2D* tonfa = ResourceManager::GetTexture("tonfa");
-    Texture2D* funnycat = ResourceManager::GetTexture("cat");
-    renderer->DrawSprite(tonfa, glm::vec2(0.0f, 0.0f), glm::vec2(720.0f, 720.0f));
-    renderer->DrawSprite(tonfa, glm::vec2(55.0f, 0.0f), glm::vec2(100.0f, 100.0f));
-    renderer->DrawSprite(funnycat, glm::vec2(120.0f, 0.0f), glm::vec2(320.0f, 180.0f));
+    Texture2D* background = ResourceManager::GetTexture("background");
+    renderer->DrawSprite(background, glm::vec2(0.0f, 0.0f), glm::vec2(720.0f, 720.0f));
+
     switch(m_state)
     {
-        case GAME_ACTIVE:
+        case GAME_ACTIVE:{
             GameLevel& current_level = m_levels.at(m_current_level);
             current_level.Draw(*renderer);
             m_particles->Draw();
             m_player->Draw(*renderer);
             m_ball->Draw(*renderer);
+
+            for (PowerUp& power_up: m_spawned_powerups){
+                power_up.Draw(*renderer);
+            }
+
             break;
+        }
+        case GAME_WIN:{
+            break;
+        }
     }
 
     m_postprocessor->End();
     m_postprocessor->Render(glfwGetTime());
 }
+
+void Game::updatePowerUps(float dt)
+{
+    PowerUpContext context{*m_player, *m_ball, *m_postprocessor};
+
+    for (PowerUp& power_up: m_spawned_powerups){
+        power_up.Move(dt);
+        if (!power_up.m_activated && power_up.m_position.y >= m_window->m_height){
+            power_up.m_is_destroyed = true;
+            continue;
+        }
+
+        if (!power_up.m_activated) continue;
+
+        if (power_up.m_duration > 0.f){
+            power_up.m_duration -= dt;
+            continue;
+        }
+        power_up.Deactivate(context);
+    }
+
+    auto remove_it = std::remove_if(m_spawned_powerups.begin(), m_spawned_powerups.end(),
+            [](const PowerUp& power_up) { return power_up.m_is_destroyed && !power_up.m_activated; });
+    m_spawned_powerups.erase(remove_it,m_spawned_powerups.end());
+}
+
 
 bool Game::loadNextLevel()
 {
@@ -260,4 +322,40 @@ bool Game::isBallOutOfScreen() const
 {
     const float margin_y = m_ball->m_size.y * 6.f;
     return m_ball->m_position.y + m_ball->m_size.y > m_window->m_height + margin_y;
+}
+
+bool Game::canSpawnPowerup(uint16_t chance)
+{
+    return rand() % chance == 0;
+}
+
+void Game::spawnPowerUp(GameObject& object)
+{
+    const std::array<PowerUp::Type, 6> power_up_types{
+        PowerUp::Type::SPEED,
+        PowerUp::Type::STICKY,
+        PowerUp::Type::PASS_THROUGH,
+        PowerUp::Type::PADDLE_SIZE_INCREASE,
+        PowerUp::Type::CONFUSE,
+        PowerUp::Type::CHAOS
+    };
+
+    for (const PowerUp::Type& power_up_type: power_up_types)
+    {
+        if (!canSpawnPowerup(75)) continue;
+        PowerUp power_up = PowerUp(power_up_type, object.m_position);
+        m_spawned_powerups.emplace_back(std::move(power_up));
+        std::cout << "Power up " << power_up.GetName() << " spawned!\n";
+        break;
+    }
+}
+
+PowerUp* Game::getActivePowerUpByType(PowerUp::Type type)
+{
+    auto it = std::find_if(m_spawned_powerups.begin(), m_spawned_powerups.end(),
+        [type](const PowerUp& power_up) { 
+            return power_up.m_type == type && power_up.m_activated;
+        });
+    if (it == m_spawned_powerups.end()) return nullptr;
+    return &(*it);
 }

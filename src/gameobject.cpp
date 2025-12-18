@@ -13,26 +13,48 @@ GameObject::GameObject()
 GameObject::GameObject(glm::vec2 position, glm::vec2 velocity, glm::vec2 size, Texture2D* sprite, glm::vec3 color)
     : m_position(position), m_velocity(velocity), m_size(size), m_rotation_deg(0.f), m_sprite(sprite), m_color(color),
     m_is_solid(true), m_is_destroyed(false)
-{
+{}
 
-}
+GameObject::~GameObject()
+{}
+
 
 GameObject::GameObject(const GameObject& other)
     :m_position(other.m_position), m_velocity(other.m_velocity), m_size(other.m_size), m_rotation_deg(other.m_rotation_deg), m_sprite(other.m_sprite), m_color(other.m_color),
     m_is_solid(other.m_is_solid), m_is_destroyed(other.m_is_destroyed)
+{}
+
+GameObject& GameObject::operator=(const GameObject& other)
 {
-    
+    m_position = other.m_position;
+    m_velocity = other.m_velocity;
+    m_size = other.m_size;
+    m_rotation_deg = other.m_rotation_deg;
+    m_sprite = other.m_sprite;
+    m_color = other.m_color;
+    m_is_solid = other.m_is_solid;
+    m_is_destroyed = other.m_is_destroyed;
+    return *this;
 }
-    
-GameObject::GameObject(GameObject&& other)
+
+
+GameObject::GameObject(GameObject&& other) noexcept
     :m_position(other.m_position), m_velocity(other.m_velocity), m_size(other.m_size), m_rotation_deg(other.m_rotation_deg), m_sprite(other.m_sprite), m_color(other.m_color),
     m_is_solid(other.m_is_solid), m_is_destroyed(other.m_is_destroyed)
 {
     other.m_sprite = nullptr;
 }
 
+glm::vec2 GameObject::Move(float dt)
+{
+    m_position += m_velocity * dt;
+    return m_position;
+}
+
+
 void GameObject::Draw(SpriteRenderer& renderer)
 {
+    if (m_is_destroyed) return;
     renderer.DrawSprite(m_sprite, m_position, m_size, m_rotation_deg, m_color);
 }
 
@@ -47,9 +69,10 @@ CollisionData GameObject::CheckCollision(const GameObject& other)
     glm::vec2 collision_normal = glm::vec2();
 
     return {
+        &other,
         x_axis_collision && y_axis_collision,
         collision_position,
         collision_normal,
-        glm::vec2()
+        glm::vec2(0.f)
     };
 }
