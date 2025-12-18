@@ -1,4 +1,0 @@
-/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/glad.dir
-/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/Breakout.dir
-/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/edit_cache.dir
-/home/forklovee/Documents/Projects/BreakoutOpenGL/build/CMakeFiles/rebuild_cache.dir
