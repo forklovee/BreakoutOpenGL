@@ -5,8 +5,13 @@ I've modified it to fit modern c++ style.
 
 # Building & Running
 Build with cmake in project directory.
+1. Configure
 ```sh
 cmake -S . -B build
+```
+2. Build
+```sh
+cmake --build build
 ```
 Run executable "Breakout" from the "build" directory.
 
